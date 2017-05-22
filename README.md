@@ -8,5 +8,5 @@ Material design: paper-dropzone-dialog
 # Example:
 
 ```html
-<paper-dropzone-dialog text="Sample" on-drop="drop" ></paper-dropzone-dialog>
+<paper-dropzone-dialog text="Sample" on-file-selected="fileSelected" on-close="onClose" ></paper-dropzone-dialog>
 ```
