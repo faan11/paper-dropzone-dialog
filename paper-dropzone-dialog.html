@@ -1,0 +1,280 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../neon-animation/web-animations.html">
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<!--
+
+### paper-dropzone-dialog
+
+Material design: paper-dropzone-dialog
+
+`<paper-dropzone-dialog>` is a material design dropzone.
+
+# Example:
+
+```html
+<paper-dropzone-dialog text="Sample" on-drop="drop" ></paper-dropzone-dialog>
+```
+
+@demo demo/index.html
+-->
+
+
+<dom-module id="paper-dropzone-dialog">
+  <template>
+    <custom-style>
+    </custom-style>
+    <style>
+      :host {}
+      /*
+      #dropZoneDialog {
+        padding-top: 0px !important;
+        margin-bottom: 0px !important;
+      }*/
+      paper-dialog{
+        margin-top: 0px !important;
+
+      }
+
+      @media only screen and (max-width: 768px) {
+        paper-dialog{
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          padding: 0;
+          margin: 0;
+          margin-bottom: 0px !important;
+        }
+        .self-center{
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        /**
+        #dropZoneDialog{
+          padding-top: auto;
+          box-shadow: none;
+          position: fixed;
+        }Desktop**/
+      }
+
+
+      @media only screen and (max-width: 800px) {
+        .area {
+          width: 270px !important;
+        }
+      }
+
+      .area {
+        width: 500px;
+        padding: 15px;
+        border: 1px solid white;
+        cursor: pointer;
+
+      }
+      .area:active {
+          cursor: crosshair;
+      }
+      #dropZone {
+        border: 2px dashed white;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        padding: 50px;
+        text-align: center;
+        font: 14pt bold arial;
+        color: white;
+
+      }
+      .self-center {
+        margin:0px !important;
+        padding:0px !important;
+      }
+      .area{
+        background: green ;
+      }
+    </style>
+    <style is="custom-style">
+      paper-icon-button {
+        position: fixed;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        margin-top: 0px !important;
+        padding: 8px !important;
+      }
+    </style>
+
+    <paper-dialog id="dropZoneDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+
+      <div class="self-center">
+        <div id="dropArea" class="area droppable">
+          <div id="dropZone">{{text}}</div>
+        </div>
+      </div>
+
+      <paper-icon-button botton-tap="close" class="top" icon="close" on-tap="dismissDropzone" dialog-dismiss></paper-icon-button>
+
+    </paper-dialog>
+
+
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+
+    is: 'paper-dropzone-dialog',
+
+
+
+    properties: {
+
+      text: {
+        type: String,
+        value: "Drop files here or Click to uploads",
+        notify: true
+      },
+
+    },
+    _performClick: function(elem) {
+      //var elem = document.getElementById(elemId);
+      if (elem && document.createEvent) {
+        var evt = document.createEvent("MouseEvents");
+        evt.initEvent("click", false, false);
+        elem.dispatchEvent(evt);
+
+      }
+      this.clicked = false;
+    },
+    _makeDroppable: function(element) {
+      var me = this;
+      var input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      //input.setAttribute('id', 'ddrop');
+
+      input.setAttribute('multiple', false);
+      input.setAttribute('accept', "image/*");
+
+      input.style.display = 'none';
+
+      input.addEventListener('change', triggerCallback);
+
+      element.appendChild(input);
+
+
+      element.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        element.classList.add('dragover');
+      });
+
+      element.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        element.classList.remove('dragover');
+      });
+
+      element.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (me.clicked == false) {
+          element.classList.remove('dragover');
+          this.clicked = true;
+          triggerCallback(e);
+        }
+      });
+
+      element.addEventListener('click', function() {
+        if (me.clicked == false) {
+          input.value = null;
+          me.clicked = true;
+          me._performClick(input);
+        }
+
+        //$(input).click();
+        //$(input).click();
+        //alert("fine");
+      });
+      function triggerCallback(e) {
+          var files;
+          if (e.dataTransfer) {
+              files = e.dataTransfer.files;
+          } else if (e.target) {
+              files = e.target.files;
+          }
+          //callback(files)
+          me._onDropEvent(files);
+          //callback.call(null, files);
+
+      }
+      return input;
+   },
+    _enableDrop: function() {
+      var element = this.$.dropArea;
+      this._makeDroppable(element);
+    },
+    _onDropEvent: function( files) {
+      var _URL = window.URL || window.webkitURL;
+      var me = this;
+      if (!files) {
+
+        return 0;
+      }
+      if (files && files.length != 1) {
+
+        me.fire("files-error", {});
+        return 0;
+      }
+
+      if (FileReader && window.Blob && files && files.length == 1) {
+        var fr = new FileReader();
+
+        // loading file.
+        fr.onload = function() {
+            // loaded image.
+            me.fire("file-selected", {
+              name: files[0].name,
+              size: files[0].size,
+              type: files[0].type,
+              result: fr.result
+            });
+
+            //Dopo l'upload sul server
+            //Inserisci l'immagine croppata/ritagliata
+            //Sulla Paper-Card. Da fare dopo il caricamento sul server!!
+            //saveCoverPreviewImage(image.src);
+            //saveProfilePreviewImage(image.src);
+
+          }
+          // load the file.
+
+        fr.readAsDataURL(files[0]);
+        return 0;
+      } else {
+        me.fire("browser-error");
+      }
+    },
+    dismissDropzone: function() {
+      this.fire("close");
+    },
+    attached: function() {
+      this.clicked = false;
+      this._enableDrop();
+    },
+    open:function(){
+      this.$.dropZoneDialog.open();
+
+    },
+    close:function(){
+      this.$.dropZoneDialog.close();
+    }
+  });
+</script>

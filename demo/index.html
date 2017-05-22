@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>paper-dropzone-dialog demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../paper-dropzone-dialog.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+
+    <style>
+      paper-dropzone-dialog{
+        --paper-dropzone-dialog-color: yellow;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <div class="vertical-section-container centered">
+      <h3>Basic paper-dropzone-dialog demo</h3>
+      <demo-snippet>
+        <template>
+          <paper-dropzone-dialog id="dropZone" on-close="alert('closed')" ></paper-dropzone-dialog>
+          <paper-button onclick="document.getElementById('dropZone').open()">LoadFile</paper-button>
+
+
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+
+</html>
