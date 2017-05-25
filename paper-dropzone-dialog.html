@@ -58,7 +58,7 @@ Material design: paper-dropzone-dialog
           transform: translate(-50%, -50%);
         }
         #dropZoneDialog{
-          box-shadow: 0px 0px 0px 0px !important;
+          box-shadow: none !important;
         }
         /**
         #dropZoneDialog{
@@ -93,7 +93,8 @@ Material design: paper-dropzone-dialog
         padding: 50px;
         text-align: center;
         font: 14pt bold arial;
-        color: white;
+        color: var(--paper-dropzone-dialog-text-color, white) ;
+        box-shadow: 0px;
 
       }
       .self-center {
@@ -101,7 +102,8 @@ Material design: paper-dropzone-dialog
         padding:0px !important;
       }
       .area{
-        background: green ;
+        background: var(--paper-dropzone-dialog-color, green) ;
+
       }
     </style>
     <style is="custom-style">
